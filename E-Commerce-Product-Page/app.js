@@ -16,6 +16,15 @@ const hero = $("#heroImg");
 const lens = $("#zoomLens");
 let zoomOn = false;
 
+hero.addEventListener("click", ()=>{
+  zoomOn = !zoomOn;
+
+  if(!zoomOn){
+    lens.style.display = "none";
+    hero.style.transform = "scale(1)";
+  }
+});
+
 function setHero(src, thumbBtn){
   hero.src = src.includes("http") ? src : hero.src; // using demo images from unsplash
   $$(".thumb").forEach(t=>t.classList.remove("is-active"));
@@ -30,24 +39,26 @@ $$(".thumb").forEach(btn=>{
     if(e.key === "Enter" || e.key === " "){ e.preventDefault(); btn.click();}
   });
 });
-
 hero.addEventListener("mousemove",(e)=>{
+  if(!zoomOn) return;   // 🔴 THIS LINE IS IMPORTANT
+
   const rect = hero.getBoundingClientRect();
   const x = e.clientX - rect.left, y = e.clientY - rect.top;
   lens.style.left = (x-70)+"px";
   lens.style.top  = (y-70)+"px";
-  if(zoomOn){
-    lens.style.display = "block";
-    hero.style.transformOrigin = `${(x/rect.width)*100}% ${(y/rect.height)*100}%`;
-    hero.style.transform = "scale(1.25)";
-  }
+
+  lens.style.display = "block";
+  hero.style.transformOrigin = `${(x/rect.width)*100}% ${(y/rect.height)*100}%`;
+  hero.style.transform = "scale(1.25)";
 });
-["mouseenter","mouseleave"].forEach(ev=>{
-  hero.addEventListener(ev,()=>{
-    zoomOn = ev==="mouseenter";
-    if(!zoomOn){ lens.style.display="none"; hero.style.transform="scale(1)";}
-  });
-});
+
+
+// ["mouseenter","mouseleave"].forEach(ev=>{
+//   hero.addEventListener(ev,()=>{
+//     zoomOn = ev==="mouseenter";
+//     if(!zoomOn){ lens.style.display="none"; hero.style.transform="scale(1)";}
+//   });
+// });
 
 /* ===== Wishlist ===== */
 const wishBtn = $("#wishBtn");
